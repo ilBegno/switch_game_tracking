@@ -1,4 +1,3 @@
-import csv
 import sys
 import json
 from typing import Iterable, Dict, Any
@@ -67,13 +66,9 @@ def extract_row(game: Dict[str, Any]) -> Dict[str, str]:
     }
 
 
-def write_csv(rows: Iterable[Dict[str, str]], out_path: str) -> None:
-    fieldnames = ["title", "playtime", "image_url", "last_played"]
-    with open(out_path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
-        for row in rows:
-            writer.writerow({k: row.get(k, "") for k in fieldnames})
+def write_json(rows: Iterable[Dict[str, str]], out_path: str) -> None:
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(list(rows), f, indent=2, ensure_ascii=False)
 
 
 def build_url(page: int) -> str:
@@ -83,7 +78,7 @@ def build_url(page: int) -> str:
 def main(argv: list[str]) -> int:
     import os
     repo_root = os.path.dirname(os.path.abspath(__file__))
-    out_path = os.path.join(repo_root, "games.csv")
+    out_path = os.path.join(repo_root, "games.json")
     if len(argv) > 1:
         user_path = argv[1]
         out_path = user_path if os.path.isabs(user_path) else os.path.join(repo_root, user_path)
@@ -101,7 +96,7 @@ def main(argv: list[str]) -> int:
         # add a small delay to avoid hitting the server too hard
         time.sleep(5)
 
-    write_csv(all_rows, out_path)
+    write_json(all_rows, out_path)
     print(f"Wrote {len(all_rows)} rows to {out_path} across {page-1} page(s)")
     return 0
 

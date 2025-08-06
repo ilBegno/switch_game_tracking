@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Simple HTTP server to serve the games viewer locally.
-This avoids CORS issues when loading the CSV file.
+This avoids CORS issues when loading the JSON file.
 """
 
 import http.server

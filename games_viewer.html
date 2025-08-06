@@ -277,33 +277,14 @@
       grid.appendChild(frag);
     }
 
-    async function loadCSV() {
-      const res = await fetch('games.csv', { cache: 'no-store' });
-      const text = await res.text();
-      const lines = text.trim().split(/\r?\n/);
-      const header = lines.shift().split(',');
-      const idx = {
-        title: header.indexOf('title'),
-        playtime: header.indexOf('playtime'),
-        image_url: header.indexOf('image_url'),
-        last_played: header.indexOf('last_played'),
-      };
-      const rows = lines.map(line => {
-        // CSV is simple and titles don't contain commas except Pokemon Let's Go with quotes.
-        // Use a light parser to handle quoted titles.
-        const parts = [];
-        let cur = '', inQ = false;
-        for (let i=0;i<line.length;i++){
-          const ch = line[i];
-          if (ch === '"') { inQ = !inQ; continue; }
-          if (ch === ',' && !inQ) { parts.push(cur); cur=''; continue; }
-          cur += ch;
-        }
-        parts.push(cur);
-        const title = parts[idx.title];
-        const playtime = parts[idx.playtime];
-        const image_url = parts[idx.image_url];
-        const last_played = parts[idx.last_played] ? Number(parts[idx.last_played]) : 0;
+    async function loadJSON() {
+      const res = await fetch('games.json', { cache: 'no-store' });
+      const games = await res.json();
+      const rows = games.map(game => {
+        const title = game.title;
+        const playtime = game.playtime;
+        const image_url = game.image_url;
+        const last_played = game.last_played ? Number(game.last_played) : 0;
         return { title, playtime, image_url, last_played, playMins: parsePlaytime(playtime) };
       });
       state.games = rows;
@@ -339,7 +320,7 @@
 
     initFromURL();
     bindUI();
-    loadCSV();
+    loadJSON();
   </script>
 </body>
 </html>

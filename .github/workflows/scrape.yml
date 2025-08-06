@@ -38,8 +38,8 @@ jobs:
         run: |
           set -euo pipefail
           if ! git diff --quiet || [ -n "$(git ls-files --others --exclude-standard)" ]; then
-            git add games.csv
-            git commit -m "chore: update games.csv [skip ci]" || echo "Nothing to commit"
+            git add games.json
+            git commit -m "chore: update games.json [skip ci]" || echo "Nothing to commit"
             git push
           else
             echo "No changes to commit."
