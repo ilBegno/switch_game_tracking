@@ -55,6 +55,7 @@ def extract_row(game: Dict[str, Any]) -> Dict[str, str]:
     playtime = game.get("playtime") or ""
 
     image = game.get("resource_standard") or ""
+    image = image.replace("/m/", "/l/") if image else "" # Use larger image
 
     last_played = game.get("lastplayed_utc") or ""
 

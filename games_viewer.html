@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Switch Game Tracker</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0e14;
+      --bg-elev: #121826;
+      --card: #0f1724;
+      --text: #e6edf3;
+      --muted: #a9b4c0;
+      --primary: #6ae3ff;
+      --accent: #9d8cff;
+      --warn: #ffcc66;
+      --success: #65d9a5;
+      --danger: #ff7b7b;
+      --ring: rgba(106, 227, 255, 0.25);
+      --shadow: 0 10px 30px rgba(0,0,0,.45), 0 2px 8px rgba(0,0,0,.3);
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      background-color: var(--bg);
+      background-image: radial-gradient(900px 600px at 5% -10%, rgba(157,140,255,.16), transparent),
+                        radial-gradient(900px 600px at 105% -10%, rgba(106,227,255,.12), transparent);
+      background-repeat: no-repeat;
+      background-size: cover;
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    header {
+      position: sticky; top: 0; z-index: 10;
+      backdrop-filter: saturate(1.2) blur(10px);
+      background: linear-gradient(180deg, rgba(11,14,20,.8), rgba(11,14,20,.55));
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+
+    .container { max-width: 1440px; margin: 0 auto; padding: 20px clamp(16px, 4vw, 40px); }
+
+        .brand {
+      display: flex; align-items: center; gap: 14px; padding: 8px 0 18px;
+    }
+    .logo { width: 46px; height: 46px; display:grid; place-items:center; }
+    .logo img { display:block; width: 46px; height: 46px; }
+    .title { font-weight: 800; font-size: 22px; letter-spacing: 0.2px; }
+    .subtitle { color: var(--muted); font-size: 13px; }
+
+    .toolbar {
+      display: grid; grid-template-columns: 1fr auto auto; gap: 12px; align-items: center;
+      padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+
+    .search {
+      display: flex; align-items: center; gap: 10px; background: var(--bg-elev); border: 1px solid rgba(255,255,255,.08);
+      border-radius: 12px; padding: 10px 12px; box-shadow: var(--shadow);
+    }
+    .search input {
+      flex: 1; background: transparent; border: none; outline: none; color: var(--text); font-size: 14px;
+    }
+    .search .hint { color: var(--muted); font-size: 12px; }
+
+    .controls { display: flex; gap: 10px; }
+    .chip, .button {
+      background: var(--bg-elev); color: var(--text); border: 1px solid rgba(255,255,255,.08);
+      border-radius: 1000px; padding: 10px 14px; font-size: 13px; cursor: pointer;
+      transition: .2s ease; display: inline-flex; align-items: center; gap: 8px;
+    }
+    .chip:hover, .button:hover { transform: translateY(-1px); border-color: rgba(255,255,255,.18); }
+    .button.primary { background: linear-gradient(135deg, rgba(106,227,255,.18), rgba(157,140,255,.18)); border-color: rgba(255,255,255,.18); }
+
+    .stats { display: flex; gap: 12px; flex-wrap: wrap; padding: 14px 0; }
+    .stat {
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border: 1px solid rgba(255,255,255,.08); border-radius: 14px; padding: 12px 14px; min-width: 160px;
+    }
+    .stat .label { color: var(--muted); font-size: 12px; }
+    .stat .value { font-size: 18px; font-weight: 700; }
+
+    main { padding: 10px 0 40px; }
+
+    .grid { display: grid; grid-template-columns: repeat( auto-fill, minmax(220px, 1fr) ); gap: 16px; }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius);
+      overflow: hidden; position: relative; box-shadow: var(--shadow);
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 18px 40px rgba(0,0,0,.55); border-color: rgba(255,255,255,.18); }
+    .thumb { aspect-ratio: 16/9; width: 100%; object-fit: cover; background: #0c111b; display: block; }
+    .content { padding: 12px 12px 14px; display:flex; flex-direction:column; min-height: 92px; }
+    .game-title { font-weight: 700; font-size: 15px; line-height: 1.3; margin-bottom: 6px; display:-webkit-box; -webkit-line-clamp:2; line-clamp:2; -webkit-box-orient: vertical; overflow:hidden; }
+    .meta { margin-top:auto; display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 12px; }
+    .badge { padding: 4px 8px; border-radius: 999px; border: 1px solid rgba(255,255,255,.12); }
+    .time { color: var(--warn); }
+    .last { color: var(--success); }
+
+    .empty { text-align: center; color: var(--muted); padding: 40px 0; }
+
+    footer { color: var(--muted); font-size: 12px; text-align: center; padding: 24px 0 40px; }
+
+    @media (max-width: 640px) {
+      .toolbar { grid-template-columns: 1fr; }
+      .controls { justify-content: space-between; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <img src="logo.svg" alt="Nintendo Switch logo" />
+        </div>
+        <div>
+          <div class="title">Switch Game Tracker</div>
+          <div class="subtitle">Beautiful, fast overview of your play history</div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="search" role="search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <input id="q" placeholder="Search games (title)…" autocomplete="off" />
+          <div class="hint">Press / to focus</div>
+        </div>
+        <div class="controls">
+          <select id="sort" class="chip" title="Sort">
+            <option value="recent">Recently played</option>
+            <option value="playtime-desc">Playtime (desc)</option>
+            <option value="playtime-asc">Playtime (asc)</option>
+            <option value="alpha">A → Z</option>
+          </select>
+        </div>
+        <div class="controls">
+          <button id="refresh" class="button" type="button">Refresh</button>
+        </div>
+      </div>
+
+      <div class="stats" id="stats"></div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="grid" class="grid" aria-live="polite"></div>
+    <div id="empty" class="empty" hidden>No results.</div>
+  </main>
+
+  <footer>
+    Served locally via serve_games.py · Images © their owners · UI by Qwen Code
+  </footer>
+
+  <script>
+    const state = {
+      games: [],
+      q: '',
+      sort: 'recent',
+      // hideEmpty removed per request
+    };
+
+    const $ = sel => document.querySelector(sel);
+    const grid = $('#grid');
+    const empty = $('#empty');
+    const stats = $('#stats'); // displays total count, total time, and last played
+
+    function parsePlaytime(pt) {
+      if (!pt) return 0; // minutes
+      let h = 0, m = 0;
+      const hMatch = pt.match(/(\d+)h/);
+      const mMatch = pt.match(/(\d+)m/);
+      if (hMatch) h = parseInt(hMatch[1], 10);
+      if (mMatch) m = parseInt(mMatch[1], 10);
+      return h * 60 + m;
+    }
+
+    function formatPlaytime(mins) {
+      if (mins <= 0) return '—';
+      const h = Math.floor(mins / 60);
+      const m = mins % 60;
+      if (h && m) return `${h}h ${m}m`;
+      if (h) return `${h}h`;
+      return `${m}m`;
+    }
+
+    function formatDateFromEpoch(sec) {
+      if (!sec) return '—';
+      const d = new Date(parseInt(sec, 10) * 1000);
+      return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    function cmp(a,b){ return a<b?-1:a>b?1:0; }
+
+    function computeStats(rows) {
+      const total = rows.length;
+      const sumMins = rows.reduce((s, r) => s + r.playMins, 0);
+      const last = rows.reduce((mx, r) => Math.max(mx, r.last_played||0), 0);
+      return { total, sumMins, last };
+    }
+
+    function renderStats(rows) {
+      const s = computeStats(rows);
+      stats.innerHTML = `
+        <div class="stat"><div class="label">Total games</div><div class="value">${s.total}</div></div>
+        <div class="stat"><div class="label">Total playtime</div><div class="value">${formatPlaytime(s.sumMins)}</div></div>
+        <div class="stat"><div class="label">Last played</div><div class="value">${formatDateFromEpoch(s.last)}</div></div>
+      `;
+    }
+
+    function applyFilters() {
+      const q = state.q.trim().toLowerCase();
+      let rows = state.games.filter(g => !q || g.title.toLowerCase().includes(q));
+      
+
+      switch (state.sort) {
+        case 'alpha':
+          rows.sort((a,b)=>cmp(a.title.toLowerCase(), b.title.toLowerCase()));
+          break;
+        case 'playtime-asc':
+          rows.sort((a,b)=>a.playMins-b.playMins);
+          break;
+        case 'playtime-desc':
+          rows.sort((a,b)=>b.playMins-a.playMins);
+          break;
+        default: // recent
+          rows.sort((a,b)=> (b.last_played||0) - (a.last_played||0));
+      }
+
+      renderStats(rows);
+      renderGrid(rows);
+    }
+
+    function renderGrid(rows) {
+      if (!rows.length) {
+        grid.innerHTML = '';
+        empty.hidden = false;
+        return;
+      }
+      empty.hidden = true;
+      const frag = document.createDocumentFragment();
+      rows.forEach(r => {
+        const card = document.createElement('article');
+        card.className = 'card';
+        card.innerHTML = `
+          <img class="thumb" src="${r.image_url}" alt="${r.title}" loading="lazy" />
+          <div class="content">
+            <div class="game-title">${r.title}</div>
+            <div class="meta">
+              <span class="badge time" title="Playtime">${formatPlaytime(r.playMins)}</span>
+              <span>•</span>
+              <span class="badge last" title="Last played">${formatDateFromEpoch(r.last_played)}</span>
+            </div>
+          </div>
+        `;
+        frag.appendChild(card);
+      });
+      grid.innerHTML = '';
+      grid.appendChild(frag);
+    }
+
+    async function loadCSV() {
+      const res = await fetch('games.csv', { cache: 'no-store' });
+      const text = await res.text();
+      const lines = text.trim().split(/\r?\n/);
+      const header = lines.shift().split(',');
+      const idx = {
+        title: header.indexOf('title'),
+        playtime: header.indexOf('playtime'),
+        image_url: header.indexOf('image_url'),
+        last_played: header.indexOf('last_played'),
+      };
+      const rows = lines.map(line => {
+        // CSV is simple and titles don't contain commas except Pokemon Let's Go with quotes.
+        // Use a light parser to handle quoted titles.
+        const parts = [];
+        let cur = '', inQ = false;
+        for (let i=0;i<line.length;i++){
+          const ch = line[i];
+          if (ch === '"') { inQ = !inQ; continue; }
+          if (ch === ',' && !inQ) { parts.push(cur); cur=''; continue; }
+          cur += ch;
+        }
+        parts.push(cur);
+        const title = parts[idx.title];
+        const playtime = parts[idx.playtime];
+        const image_url = parts[idx.image_url];
+        const last_played = parts[idx.last_played] ? Number(parts[idx.last_played]) : 0;
+        return { title, playtime, image_url, last_played, playMins: parsePlaytime(playtime) };
+      });
+      state.games = rows;
+      applyFilters();
+    }
+
+    function bindUI() {
+      const q = $('#q');
+      const sort = $('#sort');
+      // removed toggleEmpty per request
+      const refresh = $('#refresh');
+
+      q.addEventListener('input', () => { state.q = q.value; applyFilters(); });
+      window.addEventListener('keydown', (e)=>{ if(e.key==='/' && document.activeElement!==q){ e.preventDefault(); q.focus(); }});
+
+      sort.addEventListener('change', ()=>{ state.sort = sort.value; applyFilters(); });
+
+      
+
+      refresh.addEventListener('click', ()=> loadCSV());
+    }
+
+    bindUI();
+    loadCSV();
+  </script>
+</body>
+</html>
