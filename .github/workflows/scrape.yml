@@ -1,8 +1,10 @@
 name: Scrape Exophase
 
 on:
+  # remove between the lines to disable the schedule
   schedule:
     - cron: "23 4 * * *"  # daily at 04:23 UTC
+  # remove between the lines to disable the schedule
   workflow_dispatch: {}
 
 permissions:
