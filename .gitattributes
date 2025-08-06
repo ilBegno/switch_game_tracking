@@ -1,0 +1,5 @@
+# Ensure GitHub Actions workflow scripts use LF to avoid bash syntax errors on linux runners
+.github/workflows/* text eol=lf
+
+# Common shell scripts
+*.sh text eol=lf

@@ -32,10 +32,12 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - name: Commit changes
+        shell: bash
         run: |
-          if ! git diff --quiet; then
+          set -euo pipefail
+          if ! git diff --quiet || [ -n "$(git ls-files --others --exclude-standard)" ]; then
             git add games.csv
-            git commit -m "chore: update games.csv [skip ci]"
+            git commit -m "chore: update games.csv [skip ci]" || echo "Nothing to commit"
             git push
           else
             echo "No changes to commit."
