@@ -56,7 +56,7 @@ def extract_row(game: Dict[str, Any]) -> Dict[str, str]:
 
     image = game.get("resource_standard") or ""
 
-    last_played = game.get("last_played_utc") or ""
+    last_played = game.get("lastplayed_utc") or ""
 
     return {
         "title": str(title),
@@ -80,9 +80,12 @@ def build_url(page: int) -> str:
 
 
 def main(argv: list[str]) -> int:
-    out_path = "games.csv"
+    import os
+    repo_root = os.path.dirname(os.path.abspath(__file__))
+    out_path = os.path.join(repo_root, "games.csv")
     if len(argv) > 1:
-        out_path = argv[1]
+        user_path = argv[1]
+        out_path = user_path if os.path.isabs(user_path) else os.path.join(repo_root, user_path)
 
     all_rows: list[Dict[str, str]] = []
     page = 1
@@ -94,9 +97,8 @@ def main(argv: list[str]) -> int:
             break
         all_rows.extend(extract_row(g) for g in games)
         page += 1
-        #add a small delay to avoid hitting the server too hard
+        # add a small delay to avoid hitting the server too hard
         time.sleep(5)
-
 
     write_csv(all_rows, out_path)
     print(f"Wrote {len(all_rows)} rows to {out_path} across {page-1} page(s)")
