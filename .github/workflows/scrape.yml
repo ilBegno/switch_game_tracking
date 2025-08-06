@@ -28,6 +28,10 @@ jobs:
         run: |
           python scrape_exophase.py
 
+      - name: Embed JSON in HTML
+        run: |
+          python embed_json.py
+
       - name: Configure Git
         run: |
           git config user.name "github-actions[bot]"
@@ -38,8 +42,8 @@ jobs:
         run: |
           set -euo pipefail
           if ! git diff --quiet || [ -n "$(git ls-files --others --exclude-standard)" ]; then
-            git add games.json
-            git commit -m "chore: update games.json [skip ci]" || echo "Nothing to commit"
+            git add games.json games_viewer_embedded.html
+            git commit -m "chore: update games.json and embedded HTML [skip ci]" || echo "Nothing to commit"
             git push
           else
             echo "No changes to commit."
