@@ -99,7 +99,7 @@ function renderGrid(rows) {
         <div class="game-title">${r.title}</div>
         <div class="meta">
           <span class="badge time" title="Playtime">${formatPlaytime(r.playMins)}</span>
-          <span>•</span>
+          <span class="spacer"></span>
           <span class="badge last" title="Last played">${formatDateFromEpoch(r.last_played)}</span>
         </div>
       </div>
