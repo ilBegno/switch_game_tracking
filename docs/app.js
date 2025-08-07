@@ -129,6 +129,7 @@ function bindUI() {
   const sort = $('#sort');
 
   q.addEventListener('input', () => { state.q = q.value; applyFilters(); updateURL(); });
+  q.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); q.blur(); } });
   window.addEventListener('keydown', (e)=>{ if(e.key==='/' && document.activeElement!==q){ e.preventDefault(); q.focus(); }});
 
   sort.addEventListener('change', ()=>{ state.sort = sort.value; applyFilters(); updateURL(); });
