@@ -1,51 +1,39 @@
 # Switch Game Tracking
 
-A web application to track and view Nintendo Switch game playtime data scraped from Exophase.
+A lightweight web viewer for Nintendo Switch play history, with data scraped from Exophase and published via GitHub Pages.
 
-## Files
+## Repository Layout
 
-- `scrape_exophase.py` - Python script that scrapes game data from Exophase
-- `games.json` - Raw game data in JSON format
-- `games_viewer.html` - Web interface that fetches data from games.json (requires local server due to CORS)
-- `games_viewer_embedded.html` - **Standalone web interface with embedded JSON data (no CORS issues)**
-- `embed_json.py` - Script that creates the embedded HTML file from the original HTML, JSON, and SVG logo
-- `serve_games.py` - Local development server
+- `docs/`
+  - `index.html` – Web UI (fetches `games.json`)
+  - `games.json` – Scraped data published to Pages
+  - `logo.svg`, `robots.txt` – Assets and robots policy
+- `scrape_exophase.py` – Python scraper for Exophase (outputs to `docs/games.json` by default)
+- `serve_games.py` – Local dev static server (serves `docs/`)
+- `.github/workflows/scrape.yml` – Nightly job to refresh `docs/games.json`
 
 ## Usage
 
-### View Games (Recommended)
+### Local development
 
-Open `games_viewer_embedded.html` directly in your browser. This file contains all the game data and logo embedded within it, so it works without needing a local server or dealing with CORS issues.
+1. Ensure you have Python 3 installed.
+2. Run the local server:
+   ```bash
+   python serve_games.py
+   ```
+3. Your browser should open to `http://localhost:8000/` (serving `docs/`).
 
-### View Games (Alternative)
-
-If you prefer using the original HTML file that fetches JSON dynamically:
-
-1. Run the local server: `python serve_games.py`
-2. Open `http://localhost:8000` in your browser
 
 ## Automated Updates
 
-The repository uses GitHub Actions to automatically update the game data nightly:
+A GitHub Actions workflow updates the data nightly:
 
-1. `scrape_exophase.py` runs daily at 04:23 UTC to fetch latest game data
-2. `embed_json.py` runs to create an updated embedded HTML file with JSON data and logo
-3. Both `games.json` and `games_viewer_embedded.html` are committed to the repository
+1. `scrape_exophase.py` runs daily at 04:23 UTC to fetch the latest game data.
+2. The workflow commits the updated `docs/games.json` to the repository.
 
 ## Features
 
-- Search games by title
+- Search by title
 - Sort by recently played, playtime, or alphabetically
-- Responsive design with dark theme
-- No external dependencies (embedded version)
-- Auto-updating via GitHub Actions
-
-## Development
-
-To manually update the embedded HTML file after modifying the JSON data:
-
-```bash
-python embed_json.py
-```
-
-This will create/update `games_viewer_embedded.html` with the latest data from `games.json`.
+- Responsive, dark-themed UI
+- Auto-updating data via GitHub Actions
