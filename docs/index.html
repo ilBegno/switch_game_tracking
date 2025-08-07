@@ -120,6 +120,9 @@
       .toolbar { grid-template-columns: 1fr; }
       .controls { justify-content: space-between; }
     }
+    @media (hover: none) and (pointer: coarse) {
+      .search .hint { display: none; }
+    }
   </style>
 </head>
 <body>
