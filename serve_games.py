@@ -12,9 +12,13 @@ import sys
 from pathlib import Path
 
 def main():
-    # Change to the script directory
+    # Change to the docs directory (so relative fetch('./games.json') works)
     script_dir = Path(__file__).parent
-    os.chdir(script_dir)
+    docs_dir = script_dir / "docs"
+    if not docs_dir.exists():
+        print("docs/ directory not found. Please create it and place index.html there.")
+        return 1
+    os.chdir(docs_dir)
     
     # Choose port
     PORT = 8000
@@ -35,12 +39,12 @@ def main():
     Handler = http.server.SimpleHTTPRequestHandler
     
     print(f"Starting server at http://localhost:{PORT}")
-    print(f"Serving files from: {script_dir}")
+    print(f"Serving files from: {docs_dir}")
     print("\nYour games viewer will open in your browser...")
     print("Press Ctrl+C to stop the server")
     
-    # Open browser
-    webbrowser.open(f"http://localhost:{PORT}/games_viewer.html")
+    # Open browser (serve index.html in docs/)
+    webbrowser.open(f"http://localhost:{PORT}/")
     
     # Start serving
     try:

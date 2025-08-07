@@ -78,10 +78,14 @@ def build_url(page: int) -> str:
 def main(argv: list[str]) -> int:
     import os
     repo_root = os.path.dirname(os.path.abspath(__file__))
-    out_path = os.path.join(repo_root, "games.json")
+    # default to docs/games.json so GitHub Pages (docs/) serves fresh data
+    out_path = os.path.join(repo_root, "docs", "games.json")
     if len(argv) > 1:
         user_path = argv[1]
         out_path = user_path if os.path.isabs(user_path) else os.path.join(repo_root, user_path)
+
+    # ensure destination directory exists (especially in CI)
+    os.makedirs(os.path.dirname(out_path), exist_ok=True)
 
     all_rows: list[Dict[str, str]] = []
     page = 1
