@@ -98,7 +98,7 @@ def main(argv: list[str]) -> int:
         all_rows.extend(extract_row(g) for g in games)
         page += 1
         # add a small delay to avoid hitting the server too hard
-        time.sleep(5)
+        time.sleep(3)
 
     write_json(all_rows, out_path)
     print(f"Wrote {len(all_rows)} rows to {out_path} across {page-1} page(s)")
