@@ -13,7 +13,7 @@ import urllib.request
 import urllib.error
 
 BASE_URL = (
-    "https://api.exophase.com/public/player/4972201/games?environment=nintendo&sort=5&showHidden=0&me=744281&query="
+    "https://api.exophase.com/public/player/4972201/games?environment=nintendo&sort=5&showHidden=0"
 )
 
 
