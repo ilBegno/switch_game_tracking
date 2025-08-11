@@ -19,13 +19,21 @@ function parsePlaytime(pt) {
   return h * 60 + m;
 }
 
-function formatPlaytime(mins) {
-  if (mins <= 0) return '—';
-  const h = Math.floor(mins / 60);
-  const m = mins % 60;
-  if (h && m) return `${h}h ${m}m`;
-  if (h) return `${h}h`;
-  return `${m}m`;
+function formatPlaytime(minutes, fullFormat = false) {
+  if (minutes < 60) {
+    return fullFormat ? `${minutes} min${minutes !== 1 ? 's' : ''}` : `${minutes}m`;
+  }
+  
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  
+  if (fullFormat) {
+    const hourText = `${hours} hr${hours !== 1 ? 's' : ''}`;
+    const minuteText = remainingMinutes > 0 ? ` ${remainingMinutes} min${remainingMinutes !== 1 ? 's' : ''}` : '';
+    return hourText + minuteText;
+  } else {
+    return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}m` : `${hours}h`;
+  }
 }
 
 function formatDateFromEpoch(sec) {
@@ -98,17 +106,83 @@ function renderGrid(rows) {
       <div class="content">
         <div class="game-title">${r.title}</div>
         <div class="meta">
-          <span class="badge time" title="Playtime">${formatPlaytime(r.playMins)}</span>
+          <span class="badge time" title="Playtime">${formatPlaytime(r.playMins, false)}</span>
           <span class="spacer"></span>
           <span class="badge last" title="Last played">${formatDateFromEpoch(r.last_played)}</span>
         </div>
       </div>
     `;
+    // Add click event to show modal
+    card.addEventListener('click', () => showGameModal(r));
     frag.appendChild(card);
   });
   grid.innerHTML = '';
   grid.appendChild(frag);
 }
+
+function showGameModal(game) {
+  // Replace /l/ with /xl/ in the image URL for full resolution
+  const fullResImageUrl = game.image_url.replace('/l/', '/xl/');
+  
+  // Get modal elements
+  const modalImage = document.getElementById('modal-image');
+  const modal = document.getElementById('game-modal');
+  
+  // Set initial state with the low-res image while loading
+  modalImage.src = game.image_url;
+  modalImage.classList.add('loading');
+  
+  // Update modal content
+  document.getElementById('modal-title').textContent = game.title;
+  document.getElementById('modal-playtime').textContent = formatPlaytime(game.playMins, true); // Use full format
+  document.getElementById('modal-last-played').textContent = formatDateFromEpoch(game.last_played);
+  
+  // Create a new image to preload the full resolution image
+  const img = new Image();
+  img.onload = function() {
+    // When loaded, update the modal image and remove loading state
+    modalImage.src = fullResImageUrl;
+    modalImage.classList.remove('loading');
+  };
+  img.onerror = function() {
+    // If there's an error, keep the original image
+    modalImage.classList.remove('loading');
+  };
+  img.src = fullResImageUrl;
+  
+  // Show modal
+  modal.classList.add('active');
+  modal.setAttribute('aria-hidden', 'false');
+  
+  // Prevent body scroll when modal is open
+  document.body.style.overflow = 'hidden';
+}
+
+function closeGameModal() {
+  const modal = document.getElementById('game-modal');
+  modal.classList.remove('active');
+  modal.setAttribute('aria-hidden', 'true');
+  
+  // Restore body scroll
+  document.body.style.overflow = '';
+}
+
+// Close modal when clicking overlay or close button
+document.addEventListener('DOMContentLoaded', function() {
+  const modal = document.getElementById('game-modal');
+  const closeButtons = modal.querySelectorAll('[data-close]');
+  
+  closeButtons.forEach(button => {
+    button.addEventListener('click', closeGameModal);
+  });
+  
+  // Close modal with Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && modal.classList.contains('active')) {
+      closeGameModal();
+    }
+  });
+});
 
 async function loadJSON() {
   const res = await fetch('games.json', { cache: 'no-store' });
@@ -154,3 +228,20 @@ function initFromURL(){
 initFromURL();
 bindUI();
 loadJSON();
+
+// Close modal when clicking overlay or close button
+document.addEventListener('DOMContentLoaded', function() {
+  const modal = document.getElementById('game-modal');
+  const closeButtons = modal.querySelectorAll('[data-close]');
+  
+  closeButtons.forEach(button => {
+    button.addEventListener('click', closeGameModal);
+  });
+  
+  // Close modal with Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && modal.classList.contains('active')) {
+      closeGameModal();
+    }
+  });
+});
