@@ -1,0 +1,1 @@
+python ./scraper/batch_scraper.py --games-file ./docs/games.json --output ./docs/images
