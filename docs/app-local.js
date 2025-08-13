@@ -103,7 +103,7 @@ function renderGrid(rows) {
     card.className = 'card';
     card.innerHTML = `
       <div class="image-container">
-        <img class="thumb" src="${r.image_square}" alt="Cover art for ${r.title}" loading="lazy" decoding="async" />
+        <img class="thumb" src="${r.image_square}" alt="Cover art for ${r.title}" />
         <span class="playtime-badge" title="Playtime">${formatPlaytime(r.playMins, false)}</span>
       </div>
     `;
