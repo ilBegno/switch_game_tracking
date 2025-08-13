@@ -80,13 +80,46 @@
     .chip:hover, .button:hover { transform: translateY(-1px); border-color: rgba(255,255,255,.18); }
     .button.primary { background: linear-gradient(135deg, rgba(106,227,255,.18), rgba(157,140,255,.18)); border-color: rgba(255,255,255,.18); }
 
-    .stats { display: flex; gap: 12px; flex-wrap: wrap; padding: 14px 0; }
+    .stats-container {
+      padding: 14px 0;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .stats-container::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .stats-container::-webkit-scrollbar-track {
+      background: rgba(255,255,255,.05);
+      border-radius: 3px;
+    }
+
+    .stats-container::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,.2);
+      border-radius: 3px;
+    }
+
+    .stats {
+      display: flex;
+      gap: 12px;
+      min-width: fit-content;
+    }
+
     .stat {
       background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      border: 1px solid rgba(255,255,255,.08); border-radius: 14px; padding: 12px 14px; min-width: 160px;
-      display: flex; flex-direction: column; align-items: center; text-align: center;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      padding: 12px 14px;
+      min-width: 160px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
       transition: box-shadow .4s ease, border-color .4s ease;
+      flex-shrink: 0;
     }
+
     .stat:nth-child(1):hover { 
       box-shadow: 0 0 5px rgba(106, 227, 255, 0.5); 
       border-color: rgba(106, 227, 255, 0.5); 
@@ -372,7 +405,9 @@
         
       </div>
 
-      <div class="stats" id="stats"></div>
+      <div class="stats-container">
+        <div class="stats" id="stats"></div>
+      </div>
     </div>
   </header>
 
