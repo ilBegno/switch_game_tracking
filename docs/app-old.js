@@ -102,9 +102,14 @@ function renderGrid(rows) {
     const card = document.createElement('article');
     card.className = 'card';
     card.innerHTML = `
-      <div class="image-container">
-        <img class="thumb" src="${r.image_square}" alt="Cover art for ${r.title}" />
-        <span class="playtime-badge" title="Playtime">${formatPlaytime(r.playMins, false)}</span>
+      <img class="thumb" src="${r.image_url}" alt="Cover art for ${r.title}" loading="lazy" decoding="async" referrerpolicy="no-referrer" />
+      <div class="content">
+        <div class="game-title">${r.title}</div>
+        <div class="meta">
+          <span class="badge time" title="Playtime">${formatPlaytime(r.playMins, false)}</span>
+          <span class="spacer"></span>
+          <span class="badge last" title="Last played">${formatDateFromEpoch(r.last_played)}</span>
+        </div>
       </div>
     `;
     // Add click event to show modal
@@ -116,12 +121,15 @@ function renderGrid(rows) {
 }
 
 function showGameModal(game) {
+  // Replace /l/ with /xl/ in the image URL for full resolution
+  const fullResImageUrl = game.image_url.replace('/l/', '/xl/');
+  
   // Get modal elements
   const modalImage = document.getElementById('modal-image');
   const modal = document.getElementById('game-modal');
   
-  // Set initial state with the square image while loading
-  modalImage.src = game.image_square;
+  // Set initial state with the low-res image while loading
+  modalImage.src = game.image_url;
   modalImage.classList.add('loading');
   
   // Update modal content
@@ -133,14 +141,14 @@ function showGameModal(game) {
   const img = new Image();
   img.onload = function() {
     // When loaded, update the modal image and remove loading state
-    modalImage.src = game.image_main;
+    modalImage.src = fullResImageUrl;
     modalImage.classList.remove('loading');
   };
   img.onerror = function() {
     // If there's an error, keep the original image
     modalImage.classList.remove('loading');
   };
-  img.src = game.image_main;
+  img.src = fullResImageUrl;
   
   // Show modal
   modal.classList.add('active');
@@ -176,43 +184,15 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
-// Function to convert game title to filename format (matching the scraper's exact naming convention)
-function titleToFilename(title) {
-  // This replicates Python's re.sub(r'[^\w\s-]', '', game_name).strip().lower().replace(' ', '_')
-  // But we need to handle Unicode characters properly and special cases
-  
-  // First apply the Python regex equivalent - remove characters that are NOT word chars, whitespace, or hyphen
-  // In JavaScript, we need to be more explicit about Unicode characters
-  let clean = title.replace(/[^a-zA-Z0-9\s_\-À-ÿ]/g, '');
-  
-  // Apply the same transformations as the Python code
-  return clean
-    .trim()                    // .strip()
-    .toLowerCase()             // .lower()
-    .replace(/ /g, '_');       // .replace(' ', '_') - replace single spaces with underscores (not \s+)
-}
-
 async function loadJSON() {
   const res = await fetch('games.json', { cache: 'no-store' });
   const games = await res.json();
   const rows = games.map(game => {
     const title = game.title;
     const playtime = game.playtime;
+    const image_url = game.image_url;
     const last_played = game.last_played ? Number(game.last_played) : 0;
-    
-    // Generate local image paths
-    const filename = titleToFilename(title);
-    const image_square = `images/square/${filename}_square.jpg`;
-    const image_main = `images/main/${filename}_main.jpg`;
-    
-    return { 
-      title, 
-      playtime, 
-      last_played, 
-      playMins: parsePlaytime(playtime),
-      image_square,
-      image_main
-    };
+    return { title, playtime, image_url, last_played, playMins: parsePlaytime(playtime) };
   });
   state.games = rows;
   applyFilters();
