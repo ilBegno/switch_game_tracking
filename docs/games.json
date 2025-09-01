@@ -271,9 +271,9 @@
   },
   {
     "title": "Nonogram Minimal",
-    "playtime": "43m",
+    "playtime": "1h 7m",
     "image_url": "https://m.exophase.com/nintendo/games/l/77d84g5.png?3ae0c2d72f4cf2d65f824ed8d25f8846",
-    "last_played": "1756585190"
+    "last_played": "1756673775"
   },
   {
     "title": "Old School Rally Demo",
@@ -288,10 +288,16 @@
     "last_played": "1754495677"
   },
   {
+    "title": "Picross S9 - Trial Version",
+    "playtime": "25m",
+    "image_url": "https://m.exophase.com/nintendo/games/l/dg5e481.png?cae30204dfc0837977d87509316354f5",
+    "last_played": "1756666262"
+  },
+  {
     "title": "Pokémon Café Mix",
-    "playtime": "1h 12m",
+    "playtime": "1h 19m",
     "image_url": "https://m.exophase.com/nintendo/games/l/001j76e.png?030b27e2596462b39d8c369546a169fc",
-    "last_played": "1756578344"
+    "last_played": "1756630141"
   },
   {
     "title": "Pokémon HOME",
@@ -385,9 +391,9 @@
   },
   {
     "title": "SHINOBI: Art of Vengeance DEMO",
-    "playtime": "16m",
+    "playtime": "28m",
     "image_url": "https://m.exophase.com/nintendo/games/l/3706b01.png?25dbde418b6f529431f9f0e468c794b6",
-    "last_played": "1756579381"
+    "last_played": "1756649664"
   },
   {
     "title": "Slay the Spire",
@@ -511,8 +517,8 @@
   },
   {
     "title": "Voxelgram",
-    "playtime": "",
+    "playtime": "1h 40m",
     "image_url": "https://m.exophase.com/nintendo/games/l/b83b53j.png?7032b30e38633597fe6abc539c458cc7",
-    "last_played": "1756589575"
+    "last_played": "1756676505"
   }
 ]
